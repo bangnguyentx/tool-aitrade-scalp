@@ -38,8 +38,8 @@ const StorageManager = {
     // Keys Management
     async getKeys() {
         try {
-            const result = await window.storage.get('access_keys', true);
-            return result ? JSON.parse(result.value) : null;
+            const result = localStorage.getItem('access_keys');
+            return result ? JSON.parse(result) : null;
         } catch (error) {
             return null;
         }
@@ -47,7 +47,7 @@ const StorageManager = {
 
     async saveKeys(keys) {
         try {
-            await window.storage.set('access_keys', JSON.stringify(keys), true);
+            localStorage.setItem('access_keys', JSON.stringify(keys));
             return true;
         } catch (error) {
             console.error('Error saving keys:', error);
@@ -95,8 +95,8 @@ const StorageManager = {
     // Active Signals Management
     async getActiveSignals() {
         try {
-            const result = await window.storage.get('active_signals', true);
-            return result ? JSON.parse(result.value) : null;
+            const result = localStorage.getItem('active_signals');
+            return result ? JSON.parse(result) : null;
         } catch (error) {
             return null;
         }
@@ -104,7 +104,7 @@ const StorageManager = {
 
     async saveActiveSignals(signals) {
         try {
-            await window.storage.set('active_signals', JSON.stringify(signals), true);
+            localStorage.setItem('active_signals', JSON.stringify(signals));
             return true;
         } catch (error) {
             console.error('Error saving active signals:', error);
@@ -182,8 +182,8 @@ const StorageManager = {
     // Completed Signals Management
     async getCompletedSignals() {
         try {
-            const result = await window.storage.get('completed_signals', true);
-            return result ? JSON.parse(result.value) : null;
+            const result = localStorage.getItem('completed_signals');
+            return result ? JSON.parse(result) : null;
         } catch (error) {
             return null;
         }
@@ -191,7 +191,7 @@ const StorageManager = {
 
     async saveCompletedSignals(signals) {
         try {
-            await window.storage.set('completed_signals', JSON.stringify(signals), true);
+            localStorage.setItem('completed_signals', JSON.stringify(signals));
             return true;
         } catch (error) {
             console.error('Error saving completed signals:', error);
@@ -216,8 +216,8 @@ const StorageManager = {
     // Tracked Coins Management
     async getTrackedCoins() {
         try {
-            const result = await window.storage.get('tracked_coins', true);
-            return result ? JSON.parse(result.value) : null;
+            const result = localStorage.getItem('tracked_coins');
+            return result ? JSON.parse(result) : null;
         } catch (error) {
             return null;
         }
@@ -225,7 +225,7 @@ const StorageManager = {
 
     async saveTrackedCoins(coins) {
         try {
-            await window.storage.set('tracked_coins', JSON.stringify(coins), true);
+            localStorage.setItem('tracked_coins', JSON.stringify(coins));
             return true;
         } catch (error) {
             console.error('Error saving tracked coins:', error);
@@ -265,8 +265,8 @@ const StorageManager = {
     // Cooldown Management (coins không được phân tích trong 2 tiếng)
     async getCooldownCoins() {
         try {
-            const result = await window.storage.get('cooldown_coins', true);
-            return result ? JSON.parse(result.value) : null;
+            const result = localStorage.getItem('cooldown_coins');
+            return result ? JSON.parse(result) : null;
         } catch (error) {
             return null;
         }
@@ -274,7 +274,7 @@ const StorageManager = {
 
     async saveCooldownCoins(coins) {
         try {
-            await window.storage.set('cooldown_coins', JSON.stringify(coins), true);
+            localStorage.setItem('cooldown_coins', JSON.stringify(coins));
             return true;
         } catch (error) {
             console.error('Error saving cooldown coins:', error);
@@ -397,7 +397,7 @@ const StorageManager = {
             
             // Chỉ giữ lại 30 ngày gần nhất
             const last30Days = summaries.slice(-30);
-            await window.storage.set('daily_summaries', JSON.stringify(last30Days), true);
+            localStorage.setItem('daily_summaries', JSON.stringify(last30Days));
             
             console.log('Daily summary generated:', summary);
             return summary;
@@ -409,8 +409,8 @@ const StorageManager = {
 
     async getDailySummaries() {
         try {
-            const result = await window.storage.get('daily_summaries', true);
-            return result ? JSON.parse(result.value) : null;
+            const result = localStorage.getItem('daily_summaries');
+            return result ? JSON.parse(result) : null;
         } catch (error) {
             return null;
         }
@@ -419,5 +419,10 @@ const StorageManager = {
 
 // Khởi tạo storage khi load
 if (typeof window !== 'undefined') {
-    StorageManager.init();
+    // Gán StorageManager vào window để có thể truy cập từ các file khác
+    window.StorageManager = StorageManager;
+    // Gọi init khi DOM đã sẵn sàng
+    document.addEventListener('DOMContentLoaded', function() {
+        StorageManager.init();
+    });
 }
